@@ -1,4 +1,4 @@
-package tacocloud;
+package tacos.web;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import lombok.extern.slf4j.Slf4j;
-import tacocloud.Ingredient;
-import tacocloud.Taco;
-import tacocloud.Ingredient.Type;
+import tacos.Ingredient;
+import tacos.Taco;
+import tacos.TacoOrder;
+import tacos.Ingredient.Type;
 
 @Slf4j
 @Controller
