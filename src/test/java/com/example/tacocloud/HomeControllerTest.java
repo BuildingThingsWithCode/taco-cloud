@@ -11,8 +11,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import tacocloud.HomeController;
+
 @WebMvcTest (HomeController.class)
-public class HomeControllerTest {
+class HomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
