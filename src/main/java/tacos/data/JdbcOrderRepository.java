@@ -4,7 +4,6 @@ import java.sql.Types;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.asm.Type;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -14,7 +13,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import tacos.IngredientRef;
+import tacos.Ingredient;
 import tacos.Taco;
 import tacos.TacoOrder;
 
@@ -41,6 +40,7 @@ public class JdbcOrderRepository implements OrderRepository {
                         Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP
                   );
       pscf.setReturnGeneratedKeys(true);
+      
       order.setPlacedAt(new Date());
       PreparedStatementCreator psc =
             pscf.newPreparedStatementCreator(
@@ -54,6 +54,7 @@ public class JdbcOrderRepository implements OrderRepository {
                         order.getCcExpiration(),
                         order.getCcCVV(),
                         order.getPlacedAt()));
+      
       GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
       jdbcOperations.update(psc, keyHolder);
       long orderId = keyHolder.getKey().longValue();
@@ -77,6 +78,7 @@ public class JdbcOrderRepository implements OrderRepository {
                         Types.VARCHAR, Types.TIMESTAMP, Type.LONG, Type.LONG
                   );
       pscf.setReturnGeneratedKeys(true);
+      
       PreparedStatementCreator psc =
             pscf.newPreparedStatementCreator(
                   Arrays.asList(
@@ -84,21 +86,24 @@ public class JdbcOrderRepository implements OrderRepository {
                         taco.getCreatedAt(),
                         orderId,
                         orderKey));
+      
       GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
       jdbcOperations.update(psc, keyHolder);
       long tacoId = keyHolder.getKey().longValue();
       taco.setId(tacoId);
-      saveIngredientRefs(tacoId, (List<IngredientRef>) taco.getIngredients());
+      
+      saveIngredientRefs(tacoId, taco.getIngredients());
+      
       return tacoId;
    }
 
-   private void saveIngredientRefs(long tacoId, List<IngredientRef> ingredientRefs) {
+   private void saveIngredientRefs(long tacoId, List<Ingredient> ingredients) {
       int key = 0;
-      for (IngredientRef ingredientRef : ingredientRefs) {
+      for (Ingredient ingredientRef : ingredients) {
          jdbcOperations.update(
                "insert into Ingredient_Ref (ingredient, taco, taco_key) "
                      + "values (?, ?, ?)",
-                     ingredientRef.getIngredient(), tacoId, key++);
+                     ingredientRef.getId(), tacoId, key++);
       }
    }
 }
